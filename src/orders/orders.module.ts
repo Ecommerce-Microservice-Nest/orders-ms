@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { OrdersController } from './infrastructure/controllers/orders.controller';
 import { OrdersService } from './infrastructure/services/orders.service';
 import {
+  ChangeOrderStatusUseCase,
   CreateOrderUseCase,
   FindAllOrdersUseCase,
   GetOneOrderUseCase,
@@ -17,6 +18,7 @@ import { PrismarProductRepository } from './infrastructure/persistence/order-pri
     CreateOrderUseCase,
     GetOneOrderUseCase,
     FindAllOrdersUseCase,
+    ChangeOrderStatusUseCase,
     {
       provide: ORDER_Repository,
       useClass: PrismarProductRepository,
