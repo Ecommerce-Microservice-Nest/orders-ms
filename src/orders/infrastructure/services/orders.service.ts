@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { CreateOrderDto, UpdateOrderDto } from 'src/orders/application';
+import { CreateOrderDto } from 'src/orders/application';
+import { CreateOrderUseCase } from '../../application/use-cases/create-order.use-case';
 
 @Injectable()
 export class OrdersService {
+  constructor(private readonly createOrderUseCase: CreateOrderUseCase) {}
   create(createOrderDto: CreateOrderDto) {
-    return 'This action adds a new order';
+    return this.createOrderUseCase.execute(createOrderDto);
   }
 
   findAll() {
