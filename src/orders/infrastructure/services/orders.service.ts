@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 import {
   ChangeOrderStatusUseCase,
   CreateOrderDto,
+  FindAllOrdersDto,
   FindAllOrdersUseCase,
   GetOneOrderUseCase,
 } from 'src/orders/application';
 import { CreateOrderUseCase } from '../../application/use-cases/create-order.use-case';
-import { PaginationDto } from 'src/common';
 import { ChangeOrderStatusDto } from '../../application/dto/change-order-status.dto';
 
 @Injectable()
@@ -21,8 +21,8 @@ export class OrdersService {
     return this.createOrderUseCase.execute(createOrderDto);
   }
 
-  findAll(paginationDto: PaginationDto) {
-    return this.findAllOrdersUseCase.execute(paginationDto);
+  findAll(findAllOrdersDto: FindAllOrdersDto) {
+    return this.findAllOrdersUseCase.execute(findAllOrdersDto);
   }
 
   findOne(id: string) {

@@ -1,7 +1,7 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { PaginationDto } from 'src/common';
 import { IOrderRepository } from '../ports/order-repository.interface';
 import { MetaDataAllOrders, Order, ORDER_Repository } from 'src/orders/domain';
+import { FindAllOrdersDto } from '../dto/find-all-orders.dto';
 
 @Injectable()
 export class FindAllOrdersUseCase {
@@ -11,8 +11,8 @@ export class FindAllOrdersUseCase {
   ) {}
 
   execute(
-    paginationDto: PaginationDto,
+    findAllOrdersDto: FindAllOrdersDto,
   ): Promise<{ data: Order[]; meta: MetaDataAllOrders }> {
-    return this.repository.findAll(paginationDto);
+    return this.repository.findAll(findAllOrdersDto);
   }
 }

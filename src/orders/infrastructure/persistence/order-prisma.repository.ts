@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { OrderStatus } from '@prisma/client';
-import { PaginationDto } from 'src/common';
-import { CreateOrderDto, IOrderRepository } from 'src/orders/application';
+import {
+  CreateOrderDto,
+  FindAllOrdersDto,
+  IOrderRepository,
+} from 'src/orders/application';
 import { Order, MetaDataAllOrders } from 'src/orders/domain';
 import { PrismaService } from 'src/prisma/prisma.service';
 
@@ -15,15 +18,19 @@ export class PrismarProductRepository implements IOrderRepository {
     return Order.fromPrisma(created);
   }
   async findAll(
-    paginationDto: PaginationDto,
+    findAllOrdersDto: FindAllOrdersDto,
   ): Promise<{ data: Order[]; meta: MetaDataAllOrders }> {
-    const { limit, page } = paginationDto;
+    const { limit, page, status } = findAllOrdersDto;
+
+    const where = status ? { status } : {};
 
     const [totalOrders, orders] = await Promise.all([
-      this.prisma.order.count(),
+      this.prisma.order.count({ where }),
       this.prisma.order.findMany({
+        where,
         skip: (page! - 1) * limit!,
         take: limit,
+        orderBy: { createdAt: 'desc' },
       }),
     ]);
 
