@@ -14,10 +14,18 @@ export class ChangeOrderStatusUseCase {
   async execute(changeOrderStatusDto: ChangeOrderStatusDto): Promise<Order> {
     const { id, status } = changeOrderStatusDto;
     const order = await this.repository.findById(id);
+
     if (!order) {
       throw new RpcException({
         message: `Order with id ${id} not found`,
         status: HttpStatus.NOT_FOUND,
+      });
+    }
+
+    if (order.status === status) {
+      throw new RpcException({
+        message: `Order with id ${id} already has status ${status}`,
+        status: HttpStatus.BAD_REQUEST,
       });
     }
     return await this.repository.changeOrderStatus(id, status);
