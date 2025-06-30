@@ -11,8 +11,8 @@ interface PrismaOrderData {
 export class Order {
   constructor(
     public readonly id: string,
-    public readonly totalAmount: string,
-    public readonly totalItems: string,
+    public readonly totalAmount: number,
+    public readonly totalItems: number,
     public readonly status: string,
     public readonly paid: boolean,
     public readonly createdAt: Date,
@@ -23,8 +23,8 @@ export class Order {
   static fromPrisma(prismaOrder: PrismaOrderData): Order {
     return new Order(
       prismaOrder.id,
-      prismaOrder.totalAmount.toString(),
-      prismaOrder.totalItems.toString(),
+      prismaOrder.totalAmount,
+      prismaOrder.totalItems,
       prismaOrder.status,
       prismaOrder.paid,
       prismaOrder.createdAt,
