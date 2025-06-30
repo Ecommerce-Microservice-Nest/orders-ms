@@ -5,3 +5,4 @@ export * from './ports/order-repository.interface';
 
 export * from './use-cases/create-order.use-case';
 export * from './use-cases/get-one-order.use-case';
+export * from './use-cases/find-all-orders.use-case';
