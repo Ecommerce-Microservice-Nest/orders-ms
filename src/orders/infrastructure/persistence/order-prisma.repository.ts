@@ -12,9 +12,30 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class PrismarProductRepository implements IOrderRepository {
   constructor(private readonly prisma: PrismaService) {}
   async create(data: CreateOrderDto): Promise<Order> {
+    const totalAmount = data.items.reduce(
+      (sum, item) => sum + item.quantity * item.price,
+      0,
+    );
+
+    const totalItems = data.items.reduce((sum, item) => sum + item.quantity, 0);
+
     const created = await this.prisma.order.create({
-      data,
+      data: {
+        totalAmount,
+        totalItems,
+        OrderItem: {
+          create: data.items.map((item) => ({
+            productId: item.productId,
+            quantity: item.quantity,
+            price: item.price,
+          })),
+        },
+      },
+      include: {
+        OrderItem: true,
+      },
     });
+
     return Order.fromPrisma(created);
   }
   async findAll(

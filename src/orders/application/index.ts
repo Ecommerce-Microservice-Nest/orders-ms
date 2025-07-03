@@ -2,6 +2,7 @@ export * from './dto/create-order.dto';
 export * from './dto/update-order.dto';
 export * from './dto/change-order-status.dto';
 export * from './dto/find-all-orders.dto';
+export * from './dto/order-item.dto';
 
 export * from './ports/order-repository.interface';
 

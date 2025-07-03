@@ -1,3 +1,5 @@
+import { OrderItem, PrismaOrderItemData } from './order-item.entity';
+
 interface PrismaOrderData {
   id: string;
   totalAmount: number;
@@ -7,6 +9,7 @@ interface PrismaOrderData {
   paidAt?: Date | null;
   createdAt: Date;
   updatedAt: Date;
+  orderItems?: PrismaOrderItemData[];
 }
 export class Order {
   constructor(
@@ -18,9 +21,13 @@ export class Order {
     public readonly createdAt: Date,
     public readonly updatedAt: Date,
     public readonly paidAt?: Date | null,
+    public readonly orderItems?: OrderItem[],
   ) {}
 
   static fromPrisma(prismaOrder: PrismaOrderData): Order {
+    const orderItems = prismaOrder.orderItems?.map((item) =>
+      OrderItem.fromPrisma(item),
+    );
     return new Order(
       prismaOrder.id,
       prismaOrder.totalAmount,
@@ -30,6 +37,14 @@ export class Order {
       prismaOrder.createdAt,
       prismaOrder.updatedAt,
       prismaOrder.paidAt || null,
+      orderItems,
+    );
+  }
+
+  calculateTotal(): number {
+    return (
+      this.orderItems?.reduce((total, item) => total + item.getSubtotal(), 0) ||
+      this.totalAmount
     );
   }
 }
