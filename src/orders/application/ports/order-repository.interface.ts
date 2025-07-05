@@ -3,9 +3,10 @@ import { CreateOrderDto } from '../dto/create-order.dto';
 
 import { OrderStatus } from '@prisma/client';
 import { FindAllOrdersDto } from '../dto/find-all-orders.dto';
+import { Product } from '../interfaces/product.interface';
 
 export interface IOrderRepository {
-  create(data: CreateOrderDto): Promise<Order>;
+  create(data: CreateOrderDto, products: Product[]): Promise<Order>;
   findAll(
     findAllOrdersDto: FindAllOrdersDto,
   ): Promise<{ data: Order[]; meta: MetaDataAllOrders }>;

@@ -9,7 +9,7 @@ interface PrismaOrderData {
   paidAt?: Date | null;
   createdAt: Date;
   updatedAt: Date;
-  orderItems?: PrismaOrderItemData[];
+  OrderItem?: PrismaOrderItemData[];
 }
 export class Order {
   constructor(
@@ -21,13 +21,16 @@ export class Order {
     public readonly createdAt: Date,
     public readonly updatedAt: Date,
     public readonly paidAt?: Date | null,
-    public readonly orderItems?: OrderItem[],
+    public readonly OrderItems?: OrderItem[],
   ) {}
 
   static fromPrisma(prismaOrder: PrismaOrderData): Order {
-    const orderItems = prismaOrder.orderItems?.map((item) =>
+    const orderItems = prismaOrder.OrderItem?.map((item) =>
       OrderItem.fromPrisma(item),
     );
+
+    console.log('Prisma Order Data:', prismaOrder);
+
     return new Order(
       prismaOrder.id,
       prismaOrder.totalAmount,
@@ -43,7 +46,7 @@ export class Order {
 
   calculateTotal(): number {
     return (
-      this.orderItems?.reduce((total, item) => total + item.getSubtotal(), 0) ||
+      this.OrderItems?.reduce((total, item) => total + item.getSubtotal(), 0) ||
       this.totalAmount
     );
   }

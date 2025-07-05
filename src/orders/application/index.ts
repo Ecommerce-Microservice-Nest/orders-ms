@@ -10,3 +10,5 @@ export * from './use-cases/create-order.use-case';
 export * from './use-cases/get-one-order.use-case';
 export * from './use-cases/find-all-orders.use-case';
 export * from './use-cases/change-order-status.use-case';
+
+export * from './interfaces/product.interface';

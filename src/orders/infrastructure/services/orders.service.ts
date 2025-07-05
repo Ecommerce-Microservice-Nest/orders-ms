@@ -17,8 +17,22 @@ export class OrdersService {
     private readonly findAllOrdersUseCase: FindAllOrdersUseCase,
     private readonly changeOrderStatusUseCase: ChangeOrderStatusUseCase,
   ) {}
-  create(createOrderDto: CreateOrderDto) {
-    return this.createOrderUseCase.execute(createOrderDto);
+  async create(createOrderDto: CreateOrderDto) {
+    const { order, products } =
+      await this.createOrderUseCase.execute(createOrderDto);
+
+    // Crear mapa de productos para fácil acceso
+    const productMap = new Map(products.map((p) => [p.id, p]));
+
+    return {
+      ...order,
+      OrderItems: order.OrderItems?.map((item) => ({
+        price: item.price,
+        quantity: item.quantity,
+        productId: item.productId,
+        name: productMap.get(item.productId)?.name,
+      })),
+    };
   }
 
   findAll(findAllOrdersDto: FindAllOrdersDto) {

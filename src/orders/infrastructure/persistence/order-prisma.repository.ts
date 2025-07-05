@@ -5,13 +5,14 @@ import {
   FindAllOrdersDto,
   IOrderRepository,
 } from 'src/orders/application';
+import { Product } from 'src/orders/application/interfaces/product.interface';
 import { Order, MetaDataAllOrders } from 'src/orders/domain';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class PrismarProductRepository implements IOrderRepository {
   constructor(private readonly prisma: PrismaService) {}
-  async create(data: CreateOrderDto): Promise<Order> {
+  async create(data: CreateOrderDto, products: Product[]): Promise<Order> {
     const totalAmount = data.items.reduce(
       (sum, item) => sum + item.quantity * item.price,
       0,
@@ -19,16 +20,28 @@ export class PrismarProductRepository implements IOrderRepository {
 
     const totalItems = data.items.reduce((sum, item) => sum + item.quantity, 0);
 
+    // Crear mapa de productos para acceso O(1) y validación
+    const productMap = new Map(products.map((p) => [p.id, p]));
+
     const created = await this.prisma.order.create({
       data: {
         totalAmount,
         totalItems,
         OrderItem: {
-          create: data.items.map((item) => ({
-            productId: item.productId,
-            quantity: item.quantity,
-            price: item.price,
-          })),
+          createMany: {
+            data: data.items.map((item) => {
+              const product = productMap.get(item.productId);
+              if (!product) {
+                throw new Error(`Product with id ${item.productId} not found`);
+              }
+
+              return {
+                productId: item.productId,
+                quantity: item.quantity,
+                price: product.price,
+              };
+            }),
+          },
         },
       },
       include: {
@@ -36,7 +49,9 @@ export class PrismarProductRepository implements IOrderRepository {
       },
     });
 
-    return Order.fromPrisma(created);
+    const order = Order.fromPrisma(created);
+    console.log('Order created:', order);
+    return order;
   }
   async findAll(
     findAllOrdersDto: FindAllOrdersDto,
